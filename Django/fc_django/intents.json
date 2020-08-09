@@ -1,0 +1,51 @@
+{"intents": [
+        {"tag": "greeting",
+         "patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day"],
+         "responses": ["Hello, thanks for visiting", "Good to see you again", "Hi there, how can I help?"],
+         "context_set": ""
+        },
+        {"tag": "goodbye",
+         "patterns": ["Bye", "See you later", "Goodbye"],
+         "responses": ["See you later, thanks for visiting", "Have a nice day", "Bye! Come back again soon."],
+          "context_set": ""
+        },
+        {"tag": "thanks",
+         "patterns": ["Thanks", "Thank you", "That's helpful"],
+         "responses": ["Happy to help!", "Any time!", "My pleasure"],
+          "context_set": ""
+        },
+    {"tag": "information1",
+         "patterns": ["I want to know about college", "I want to know regarding college", "Could you give information about college","I want information regarding college","I would like to know about college","I would like to know regarding college","Could you tell me about college",
+         "Could you tell me regarding college","what courses are available at","what courses can one opt for at","could you give me list of courses available at"],
+         "responses": "",
+      "context_set": "college_name"
+        },
+  {"tag": "information2",
+         "patterns": ["What is the admission criteria for", "What is the percentage required to get admission", "I want to the admission criteria",
+         "I want to the percentage required to get admission","I wanted to about percentage required to get admission"],
+         "responses": "",
+      "context_set": "admissionCriteria"
+        },
+    {"tag": "information3",
+         "patterns": ["What is the fees for college for category", "I want to know about total fees for college for category","Please tell me about the fees for college for category"
+         ,"Could you give information about the fees for college for category","What is the fee for single year for category at college",
+         "I would like to know about the fee for single year for category at college","I want to know the fee for single year for college for category",
+         "Could you give me information about the fee for one year at college for category","Please give me information regarding fee for college for category"],
+         "responses": "",
+      "context_set": "fees"
+        },
+  {"tag": "information4",
+         "patterns": ["give me the list of colleges","list down all the  colleges","tell me names of all  colleges that fall under","colleges that come under the aegis of"
+         ,"could you share with me the list of all colleges"],
+         "responses": "",
+      "context_set": "type"
+        },
+    {"tag": "information5",
+         "patterns": ["could you share with me the information related to number of seats for","could you tell me number of seats available for","please tell me the number of seats available for course at",
+         "give me the information related to number of seats available for course at","I want to know number of seats available for at",
+         "I wanted to know number of seats available for at","How many seats are offered by for"],
+         "responses": "",
+      "context_set": "seats"
+        }
+   ]
+}
