@@ -1,8 +1,7 @@
 from django.contrib import admin
-#from .models import EmpDetails,Attendance
+from .models import IhaDetails
 
 
 
 # Register your models here.
-#admin.site.register(EmpDetails)
-#admin.site.register(Attendance)
+admin.site.register(IhaDetails)

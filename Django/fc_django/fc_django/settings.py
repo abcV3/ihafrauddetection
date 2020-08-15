@@ -56,7 +56,7 @@ CSRF_COOKIE_HTTPONLY = True
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-       'http://localhost:4200',
+       'http://localhost:3000',
 )
 
 ROOT_URLCONF = 'fc_django.urls'
@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'fc_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'insurance',
+        'NAME': 'ihainsurance',
         'USER':'root',
         'PASSWORD':'root',
         'HOST':'localhost',

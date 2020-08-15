@@ -1,15 +1,51 @@
 # pages/views.py
 import os
 from rest_framework import serializers
-from django.http import HttpResponse,JsonResponse
+import base64
+from django.http import HttpResponse
+from .models import IhaDetails
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.http import QueryDict
+from os import path
+import json
+import datetime,calendar
+from datetime import date
+from django.forms.models import model_to_dict
 
 
-def homePageView(request):
-    return JsonResponse({'data':'Hello from Django!'})
+def getAll(request):
+    ihaList=IhaDetails.objects.all()
+    print(ihaList[0].id)
+    return JsonResponse({"status":"Success"},safe=False)
+
+@csrf_exempt
+def saveFile(request):
+    response = {'status': 'Failure', 'responseObject': None}
+    try:
+        if request.method == "POST":
+            body_unicode = request.body.decode('utf-8')
+            body_data = json.loads(body_unicode)
+            iha = IhaDetails()
+            iha.filename = body_data['filename']
+            bs64 = body_data['file']
+            iha.file = bytes(bs64, 'raw_unicode_escape')
+            iha.save()
+            response = {'status': 'Success', 'responseObject': None}
+        else:
+            response = {'status': 'Failure', 'responseObject': None}
+    except Exception as e:
+        response = {'status': 'Failure', 'responseObject': str(e)}
+
+    return JsonResponse(response,safe=False)
 
 
 
-"""@csrf_exempt
+"""
+def getEmpDetails(request):
+    data=list(EmpDetails.objects.values())
+    return JsonResponse(data, safe=False)
+@csrf_exempt
 def addEmployee(request):
     response=''
     newemp = EmpDetails()
@@ -1137,4 +1173,5 @@ def getTextToSpeech(msg):
             os.rmdir(os.getcwd() + os.path.sep + "Temp")
         print(str(e))
 
-    return base64_encoded """
+    return base64_encoded
+"""
