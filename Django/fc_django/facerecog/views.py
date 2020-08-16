@@ -16,8 +16,8 @@ from django.forms.models import model_to_dict
 
 def getAll(request):
     ihaList=IhaDetails.objects.all()
-    print(ihaList[0].id)
-    return JsonResponse({"status":"Success"},safe=False)
+    encoded = ihaList[10].actualfile.decode("utf-8")
+    return JsonResponse({"status":str(encoded)},safe=False)
 
 @csrf_exempt
 def saveFile(request):
@@ -28,10 +28,15 @@ def saveFile(request):
             body_data = json.loads(body_unicode)
             iha = IhaDetails()
             iha.filename = body_data['filename']
-            bs64 = body_data['file']
-            iha.file = bytes(bs64, 'raw_unicode_escape')
-            iha.save()
-            response = {'status': 'Success', 'responseObject': None}
+            bs64 = body_data['actualfile']
+
+            if IhaDetails.objects.filter(filename=body_data['filename']).first() != None:
+                response = {'status': 'Success', 'responseObject': 'File already exists'}
+            else:
+                iha.actualfile = bytes(bs64, 'raw_unicode_escape')
+                iha.save()
+
+                response = {'status': 'Success', 'responseObject': None}
         else:
             response = {'status': 'Failure', 'responseObject': None}
     except Exception as e:

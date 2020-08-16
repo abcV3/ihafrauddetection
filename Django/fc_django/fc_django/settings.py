@@ -56,7 +56,7 @@ CSRF_COOKIE_HTTPONLY = True
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-       'http://localhost:3000',
+       'http://localhost:4200',
 )
 
 ROOT_URLCONF = 'fc_django.urls'
@@ -133,3 +133,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = None

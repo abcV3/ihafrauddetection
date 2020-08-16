@@ -20,16 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e3818b7-b9e0-41eb-ba06-bdbf196b925c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/migrations/0002_attendance.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/migrations/0003_logincredentials.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/migrations/0004_collegedetails.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/migrations/0005_courses.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/migrations/0006_auto_20200731_1756.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fc_django/facerecog/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fc_django/facerecog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fc_django/fc_django/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/fc_django/settings.py" afterDir="false" />
     </list>
@@ -141,6 +133,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="409" y="4" key="#chatbot_temp" timestamp="1581848761909">

@@ -6,7 +6,7 @@ from django.db import models
 
 class IhaDetails(models.Model):
     id = models.AutoField(primary_key=True)
-    file=models.BinaryField()
+    actualfile=models.BinaryField()
     filename=models.CharField(max_length=256)
 
     class Meta:
