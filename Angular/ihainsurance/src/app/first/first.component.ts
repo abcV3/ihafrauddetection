@@ -64,7 +64,8 @@ handleFile(event) {
       console.log(res) ;
 
      let response = res.body;
-    alert(response)
+    alert(response.toString())
+    location.reload()
     });
 
  }

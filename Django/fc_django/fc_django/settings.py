@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'facerecog',
 'rest_framework',
     'corsheaders'
+
 ]
 
 MIDDLEWARE = [
@@ -90,7 +91,8 @@ DATABASES = {
         'USER':'root',
         'PASSWORD':'root',
         'HOST':'localhost',
-        'PORT':'3307'
+        'PORT':'3307',
+
 
     }
 }

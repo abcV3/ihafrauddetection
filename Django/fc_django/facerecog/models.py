@@ -1,13 +1,16 @@
 from django.db import models
 
+
 # Create your models here.
 
 
 
 class IhaDetails(models.Model):
     id = models.AutoField(primary_key=True)
-    actualfile=models.BinaryField()
-    filename=models.CharField(max_length=256)
+    actualfile = models.BinaryField()
+    filename = models.CharField(max_length=256)
+
+
 
     class Meta:
         db_table = "IhaDetails"

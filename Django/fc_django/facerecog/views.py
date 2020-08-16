@@ -12,12 +12,15 @@ import json
 import datetime,calendar
 from datetime import date
 from django.forms.models import model_to_dict
+import mysql.connector
 
 
 def getAll(request):
     ihaList=IhaDetails.objects.all()
-    encoded = ihaList[10].actualfile.decode("utf-8")
-    return JsonResponse({"status":str(encoded)},safe=False)
+    #encoded = ihaList[14].actualfile.decode("utf-8")
+    with open(ihaList[14].filename, "wb") as fh:
+        fh.write(base64.decodebytes(ihaList[14].actualfile))
+    return JsonResponse({"status":'Success'},safe=False)
 
 @csrf_exempt
 def saveFile(request):
@@ -33,13 +36,15 @@ def saveFile(request):
             if IhaDetails.objects.filter(filename=body_data['filename']).first() != None:
                 response = {'status': 'Success', 'responseObject': 'File already exists'}
             else:
-                iha.actualfile = bytes(bs64, 'raw_unicode_escape')
+                iha.actualfile =bytes(bs64, 'raw_unicode_escape')
+                print("success1")
                 iha.save()
-
+                print("success2")
                 response = {'status': 'Success', 'responseObject': None}
         else:
             response = {'status': 'Failure', 'responseObject': None}
     except Exception as e:
+        print(str(e))
         response = {'status': 'Failure', 'responseObject': str(e)}
 
     return JsonResponse(response,safe=False)
