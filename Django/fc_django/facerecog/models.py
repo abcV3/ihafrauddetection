@@ -15,6 +15,16 @@ class IhaDetails(models.Model):
     class Meta:
         db_table = "IhaDetails"
 
+class IhaTestDetails(models.Model):
+    id = models.AutoField(primary_key=True)
+    actualtestfile = models.BinaryField()
+    filename = models.CharField(max_length=256)
+    tid=models.IntegerField()
+
+
+    class Meta:
+        db_table = "IhaTestDetails"
+
 
 """
 class EmpDetails(models.Model):

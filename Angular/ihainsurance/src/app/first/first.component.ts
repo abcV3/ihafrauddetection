@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -9,19 +10,23 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 })
 export class FirstComponent implements OnInit {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient,private router: Router) { }
+files:any={};
 django=null
 file :Blob;
+
 base64textString=null
 fileToUpload: File = null;
   ngOnInit(): void {
    
-  /*  this.django=this.httpClient.get('http://127.0.0.1:8000/homePageView', {observe:'response'}).subscribe( res => { 
-      console.log(res) ;
-     this.django = res.body;
-    
+    this.files=this.httpClient.get('http://127.0.0.1:8000/getAll', {observe:'response'}).subscribe( res => { 
+     
+     this.files = res.body['responseObject'];
+  
+
+     
     });
-    */
+    
 
   }
   public extractData(res: Response) {
@@ -48,6 +53,9 @@ let response=null;
 
 
 }
+second(ID){
+  this.router.navigate(['/secondcomponent'],{queryParams: { id: ID }})
+}
 handleFile(event) {
   var binaryString = event.target.result;
          this.base64textString= binaryString
@@ -58,13 +66,15 @@ handleFile(event) {
           'actualfile':this.base64textString
         }
      
-     let body2=JSON.stringify(body)
      
+     
+     let body2=JSON.stringify(body)
+     console.log(this.base64textString)
      this.django=this.httpClient.post('http://localhost:8000/saveFile',body2, {observe:'response'}).subscribe( res => { 
       console.log(res) ;
 
      let response = res.body;
-    alert(response.toString())
+    alert(response['status']+' '+response['responseObject'])
     location.reload()
     });
 

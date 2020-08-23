@@ -1,9 +1,11 @@
 # pages/views.py
-import os
+import os, zipfile
+from zipfile import ZipFile
 from rest_framework import serializers
 import base64
+from io import StringIO
 from django.http import HttpResponse
-from .models import IhaDetails
+from .models import IhaDetails,IhaTestDetails
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import QueryDict
@@ -12,35 +14,113 @@ import json
 import datetime,calendar
 from datetime import date
 from django.forms.models import model_to_dict
-import mysql.connector
+
 
 
 def getAll(request):
     ihaList=IhaDetails.objects.all()
     #encoded = ihaList[14].actualfile.decode("utf-8")
-    with open(ihaList[14].filename, "wb") as fh:
-        fh.write(base64.decodebytes(ihaList[14].actualfile))
-    return JsonResponse({"status":'Success'},safe=False)
+    """with open(ihaList[1].filename, "wb") as fh:
+    
+        fh.write(base64.decodebytes(ihaList[1].actualfile))"""
+    resobj=[]
+    for i in range(0,ihaList.count()):
+        dic={'id':ihaList[i].id,'filename':ihaList[i].filename}
+        resobj.append(dic)
+
+    return JsonResponse({"status":'Success','responseObject':resobj},safe=False)
 
 @csrf_exempt
 def saveFile(request):
     response = {'status': 'Failure', 'responseObject': None}
     try:
         if request.method == "POST":
+
             body_unicode = request.body.decode('utf-8')
+
             body_data = json.loads(body_unicode)
+
             iha = IhaDetails()
             iha.filename = body_data['filename']
-            bs64 = body_data['actualfile']
 
-            if IhaDetails.objects.filter(filename=body_data['filename']).first() != None:
-                response = {'status': 'Success', 'responseObject': 'File already exists'}
+            """with open(iha.filename, "wb") as fh:
+                decoded = base64.b64decode(body_data['actualfile'])
+                fh.write(decoded)
+                with zipfile.ZipFile(iha.filename) as zf:
+                    zf.extractall()
+            os.remove(iha.filename)
+            iha.filename=iha.filename[:-(len('.zip'))]
+            iha.filename=iha.filename+'.csv'
+            data = open(iha.filename, 'rb').read()
+
+            bs64 = base64.b64encode(data).decode('UTF-8')
+            os.remove(iha.filename)"""
+
+
+
+
+            if body_data['filename'].endswith('.zip'):
+
+                if IhaDetails.objects.filter(filename=body_data['filename']).first() != None:
+                    response = {'status': 'Failure', 'responseObject': 'File already exists'}
+                else:
+                    iha.actualfile =bytes(body_data['actualfile'], 'raw_unicode_escape')
+                    print("success1")
+                    iha.save()
+                    print("success2")
+                    response = {'status': 'Success', 'responseObject': None}
             else:
-                iha.actualfile =bytes(bs64, 'raw_unicode_escape')
-                print("success1")
-                iha.save()
-                print("success2")
-                response = {'status': 'Success', 'responseObject': None}
+                response = {'status': 'Failure', 'responseObject': 'File is not in ZIP format.'}
+        else:
+            response = {'status': 'Failure', 'responseObject': None}
+    except Exception as e:
+        print(str(e))
+        response = {'status': 'Failure', 'responseObject': str(e)}
+
+    return JsonResponse(response,safe=False)
+
+
+@csrf_exempt
+def saveTestFile(request):
+    response = {'status': 'Failure', 'responseObject': None}
+    try:
+        if request.method == "POST":
+
+            body_unicode = request.body.decode('utf-8')
+
+            body_data = json.loads(body_unicode)
+            
+            iha = IhaTestDetails()
+            iha.filename = body_data['filename']
+
+            """with open(iha.filename, "wb") as fh:
+                decoded = base64.b64decode(body_data['actualfile'])
+                fh.write(decoded)
+                with zipfile.ZipFile(iha.filename) as zf:
+                    zf.extractall()
+            os.remove(iha.filename)
+            iha.filename=iha.filename[:-(len('.zip'))]
+            iha.filename=iha.filename+'.csv'
+            data = open(iha.filename, 'rb').read()
+
+            bs64 = base64.b64encode(data).decode('UTF-8')
+            os.remove(iha.filename)"""
+
+            if body_data['filename'].endswith('.zip'):
+
+                print('tt')
+                if IhaTestDetails.objects.filter(tid=body_data['tid']).first() != None:
+                    response = {'status': 'Failure', 'responseObject': 'File already exists'}
+                else:
+                    print('ttt')
+                    iha.actualfile =bytes(body_data['actualfile'], 'raw_unicode_escape')
+                    iha.tid=body_data['tid']
+                    print("success1")
+                    iha.save()
+                    print("success2")
+                    response = {'status': 'Success', 'responseObject': None}
+            else:
+                response = {'status': 'Failure', 'responseObject': 'File is not in ZIP format.'}
         else:
             response = {'status': 'Failure', 'responseObject': None}
     except Exception as e:
