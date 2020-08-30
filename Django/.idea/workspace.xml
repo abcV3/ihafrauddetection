@@ -20,10 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e3818b7-b9e0-41eb-ba06-bdbf196b925c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Angular/ihainsurance/src/app/first/first.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../Angular/ihainsurance/src/app/first/first.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/Train_Outpatientdata-1542865627584.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fc_django/facerecog/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fc_django/facerecog/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fc_django/facerecog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/fc_django/facerecog/views.py" afterDir="false" />
     </list>

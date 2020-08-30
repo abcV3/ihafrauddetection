@@ -1,5 +1,13 @@
 # pages/views.py
 import os, zipfile
+import seaborn as sns
+import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import io
 from zipfile import ZipFile
 from rest_framework import serializers
 import base64
@@ -16,6 +24,77 @@ from datetime import date
 from django.forms.models import model_to_dict
 
 
+def generateUnivarite(request):
+    response = {'status': 'Failure', 'responseObject': None}
+    try:
+        if request.method == "GET":
+
+
+            tid = request.GET.get('tid')
+            ihaTrain=IhaDetails.objects.get(id=tid)
+            if ihaTrain!=None:
+                with open(ihaTrain.filename, "wb") as fh:
+                    decoded = base64.b64decode(ihaTrain.actualfile)
+                    fh.write(decoded)
+                    with zipfile.ZipFile(ihaTrain.filename) as zf:
+                        zf.extractall()
+                os.remove(ihaTrain.filename)
+                ihaTrain.filename = ihaTrain.filename[:-(len('.zip'))]
+                ihaTrain.filename = ihaTrain.filename + '.csv'
+                Train = pd.read_csv(ihaTrain.filename)
+                Train = Train.replace(
+                            {'ChronicCond_Alzheimer': 2, 'ChronicCond_Heartfailure': 2, 'ChronicCond_KidneyDisease': 2,
+                             'ChronicCond_Cancer': 2, 'ChronicCond_ObstrPulmonary': 2, 'ChronicCond_Depression': 2,
+                             'ChronicCond_Diabetes': 2, 'ChronicCond_IschemicHeart': 2, 'ChronicCond_Osteoporasis': 2,
+                             'ChronicCond_rheumatoidarthritis': 2, 'ChronicCond_stroke': 2}, 0)
+
+                Train = Train.replace({'RenalDiseaseIndicator': 'Y'}, 1)
+                        # drop column that have float value and object value
+                Train.drop(["Provider", "BeneID", "ClaimID", "ClaimStartDt", "ClaimEndDt", "AttendingPhysician",
+                                    "OperatingPhysician",
+                                    "OtherPhysician", "ClmDiagnosisCode_1", "ClmDiagnosisCode_2", "ClmDiagnosisCode_3",
+                                    "ClmDiagnosisCode_4", "ClmDiagnosisCode_5", "ClmDiagnosisCode_6",
+                                    "ClmDiagnosisCode_7",
+                                    "ClmDiagnosisCode_8", "ClmDiagnosisCode_9", "ClmDiagnosisCode_10",
+                                    "ClmProcedureCode_1",
+                                    "ClmProcedureCode_2", "ClmProcedureCode_3", "ClmProcedureCode_4",
+                                    "ClmProcedureCode_5", "ClmProcedureCode_6",
+                                    "ClmAdmitDiagnosisCode", "AdmissionDt", "DischargeDt", "DiagnosisGroupCode", "DOB",
+                                    "DOD", "State", "County"], axis=1, inplace=True)
+                Train['PotentialFraud'] = Train['PotentialFraud'].map({'Yes': 1, 'No': 0})
+                Train["AdmitForDays"] = Train["AdmitForDays"].fillna(0)
+                Train["DeductibleAmtPaid"] = Train["DeductibleAmtPaid"].fillna(0)
+                Train = Train.astype(int)
+                        # print(Train.info())
+                        # sns.heatmap(Train.corr(),vmin=-1,vmax=1,center=0)
+
+                sns.set(rc={'figure.figsize': (12, 8)}, style='white')
+
+                sns.lmplot(x='AdmitForDays', y='InscClaimAmtReimbursed', hue='PotentialFraud',
+                                   col='PotentialFraud', fit_reg=False, data=Train)
+
+                        #plt.show()
+                s = io.BytesIO()
+                plt.savefig(s, format='png', bbox_inches="tight")
+                plt.close('all')
+
+                s = base64.b64encode(s.getvalue()).decode("utf-8").replace("\n", "")
+                response = {'status': 'Success', 'responseObject': s}
+
+
+
+
+                os.remove(ihaTrain.filename)
+            else:
+                response = {'status': 'Failure', 'responseObject': 'The requested object not found.'}
+
+        else:
+            response = {'status': 'Failure', 'responseObject': 'The requested method is a get method.'}
+    except Exception as e:
+        print(str(e))
+        response = {'status': 'Failure', 'responseObject': str(e)}
+
+    return JsonResponse(response,safe=False)
 
 def getAll(request):
     ihaList=IhaDetails.objects.all()
@@ -27,8 +106,36 @@ def getAll(request):
     for i in range(0,ihaList.count()):
         dic={'id':ihaList[i].id,'filename':ihaList[i].filename}
         resobj.append(dic)
+        """if ihaList[i].id==21:
+
+            with open(ihaList[i].filename, "wb") as fh:
+                decoded = base64.b64decode(ihaList[i].actualfile)
+                fh.write(decoded)
+                with zipfile.ZipFile(ihaList[i].filename) as zf:
+                    zf.extractall()"""
 
     return JsonResponse({"status":'Success','responseObject':resobj},safe=False)
+
+
+def getAllTest(request):
+    ihaList = IhaTestDetails.objects.filter(tid=request.GET.get('tid'))
+    # encoded = ihaList[14].actualfile.decode("utf-8")
+    """with open(ihaList[1].filename, "wb") as fh:
+
+        fh.write(base64.decodebytes(ihaList[1].actualfile))"""
+    resobj = []
+    for i in range(0, ihaList.count()):
+        dic = {'id': ihaList[i].id, 'filename': ihaList[i].filename}
+        resobj.append(dic)
+        """if ihaList[i].id==21:
+
+            with open(ihaList[i].filename, "wb") as fh:
+                decoded = base64.b64decode(ihaList[i].actualfile)
+                fh.write(decoded)
+                with zipfile.ZipFile(ihaList[i].filename) as zf:
+                    zf.extractall()"""
+
+    return JsonResponse({"status": 'Success', 'responseObject': resobj}, safe=False)
 
 @csrf_exempt
 def saveFile(request):
@@ -89,7 +196,7 @@ def saveTestFile(request):
             body_unicode = request.body.decode('utf-8')
 
             body_data = json.loads(body_unicode)
-            
+
             iha = IhaTestDetails()
             iha.filename = body_data['filename']
 

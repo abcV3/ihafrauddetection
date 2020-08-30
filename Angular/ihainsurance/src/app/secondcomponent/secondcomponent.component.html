@@ -2,5 +2,28 @@
     <input type="file"
     id="file"
     (change)="handleFileInput($event.target.files)">
-
+    <table id="files">
+        <tr>
+          <th>
+            ID
+          </th>
+          <th>
+            File Name
+          </th>
+        
+        </tr>
+      
+        <tr *ngFor = "let file of files">
+        
+          <td>
+              {{file.id}}
+          </td>
+          <td>
+            <button (click)="third(file.id)">{{file.filename}}</button>
+            
+          </td>
+        
+        </tr>
+      
+      </table>
     </div>
