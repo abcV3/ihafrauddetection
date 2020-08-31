@@ -7,6 +7,7 @@ import { FirstComponent } from './first/first.component';
 import { SecondcomponentComponent } from './secondcomponent/secondcomponent.component';
 import { ThirdComponent } from './third/third.component';
 import { UnivariateComponent } from './univariate/univariate.component';
+import { MultivariateComponent } from './multivariate/multivariate.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { UnivariateComponent } from './univariate/univariate.component';
     FirstComponent,
     SecondcomponentComponent,
     ThirdComponent,
-    UnivariateComponent
+    UnivariateComponent,
+    MultivariateComponent
   ],
   imports: [
     BrowserModule,

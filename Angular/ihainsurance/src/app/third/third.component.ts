@@ -23,4 +23,10 @@ tid;
     
 
   }
+  multivariate(){
+    console.log("SSS")
+    this.router2.navigate(['/multivariatecomponent'],{queryParams: { tid: this.tid }})
+    
+
+  }
 }

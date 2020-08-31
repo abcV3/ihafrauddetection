@@ -96,6 +96,129 @@ def generateUnivarite(request):
 
     return JsonResponse(response,safe=False)
 
+
+
+def generateMultivarite(request):
+    response = {'status': 'Failure', 'responseObject': None}
+
+    try:
+        if request.method == "GET":
+
+            s = io.BytesIO()
+            tid = request.GET.get('tid')
+            ihaTrain=IhaDetails.objects.get(id=tid)
+            if ihaTrain!=None:
+                with open(ihaTrain.filename, "wb") as fh:
+                    decoded = base64.b64decode(ihaTrain.actualfile)
+                    fh.write(decoded)
+                    with zipfile.ZipFile(ihaTrain.filename) as zf:
+                        zf.extractall()
+                os.remove(ihaTrain.filename)
+                print('DDDD')
+                ihaTrain.filename = ihaTrain.filename[:-(len('.zip'))]
+                ihaTrain.filename = ihaTrain.filename + '.csv'
+                Train = pd.read_csv(ihaTrain.filename)
+                Train.replace(
+                    {'ChronicCond_Alzheimer': 2, 'ChronicCond_Heartfailure': 2, 'ChronicCond_KidneyDisease': 2,
+                     'ChronicCond_Cancer': 2, 'ChronicCond_ObstrPulmonary': 2, 'ChronicCond_Depression': 2,
+                     'ChronicCond_Diabetes': 2, 'ChronicCond_IschemicHeart': 2, 'ChronicCond_Osteoporasis': 2,
+                     'ChronicCond_rheumatoidarthritis': 2, 'ChronicCond_stroke': 2}, 0)
+
+                Train = Train.replace({'RenalDiseaseIndicator': 'Y'}, 1)
+                # drop column that have float value and object value
+                Train.drop(["Provider", "BeneID", "ClaimID", "ClaimStartDt", "ClaimEndDt", "AttendingPhysician",
+                            "OperatingPhysician",
+                            "OtherPhysician", "ClmDiagnosisCode_1", "ClmDiagnosisCode_2", "ClmDiagnosisCode_3",
+                            "ClmDiagnosisCode_4", "ClmDiagnosisCode_5", "ClmDiagnosisCode_6", "ClmDiagnosisCode_7",
+                            "ClmDiagnosisCode_8", "ClmDiagnosisCode_9", "ClmDiagnosisCode_10", "ClmProcedureCode_1",
+                            "ClmProcedureCode_2", "ClmProcedureCode_3", "ClmProcedureCode_4", "ClmProcedureCode_5",
+                            "ClmProcedureCode_6",
+                            "ClmAdmitDiagnosisCode", "AdmissionDt", "DischargeDt", "DiagnosisGroupCode", "DOB", "DOD",
+                            "State", "County"], axis=1, inplace=True)
+                Train['PotentialFraud'] = Train['PotentialFraud'].map({'Yes': 1, 'No': 0})
+                Train["AdmitForDays"] = Train["AdmitForDays"].fillna(0)
+                Train["DeductibleAmtPaid"] = Train["DeductibleAmtPaid"].fillna(0)
+                Train = Train.astype(int)
+                # print(Train.info())
+                # sns.heatmap(Train.corr(),vmin=-1,vmax=1,center=0)
+                count_classes_provider = pd.value_counts(Train['PotentialFraud'], sort=True)
+
+                LABELS = ["Non Fraud", "Fraud"]
+                # Drawing a barplot
+                count_classes_provider.plot(kind='bar', rot=0, figsize=(10, 6))
+
+                # Giving titles and labels to the plot
+                plt.title("Potential Fraud distribution in individual Providers data")
+                plt.xticks(range(2), LABELS)
+                plt.xlabel("Potential Fraud Class ")
+                plt.ylabel("Number of PotentialFraud per Class ")
+                #plt.show()
+                plt.savefig(s, format='png', bbox_inches="tight")
+                plt.close('all')
+
+                s = base64.b64encode(s.getvalue()).decode("utf-8").replace("\n", "")
+                normalDistribution=s
+                s=None
+                s=io.BytesIO()
+                count_Race = pd.value_counts(Train['Race'], sort=True)
+
+                # Drawing a barplot
+                (count_Race * 100 / len(Train)).plot(kind='bar', rot=0, figsize=(10, 6), fontsize=12)
+
+                # Giving titles and labels to the plot
+                plt.yticks(np.arange(0, 100, 20))
+                plt.title("Race - wise Beneficiary Distribution", fontsize=18)
+                plt.xlabel("Race Code", fontsize=15)
+                plt.ylabel("Percentage of Beneficiaries "'%', fontsize=15)
+                plt.savefig(s, format='png', bbox_inches="tight")
+                plt.close('all')
+                s = base64.b64encode(s.getvalue()).decode("utf-8").replace("\n", "")
+                raceWise=s
+                s = None
+                s = io.BytesIO()
+                sns.set(rc={'figure.figsize': (12, 8)}, style='white')
+
+                f, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+                f.suptitle('Insurance Claim Amount Reimbursed Vs Age')
+
+                ax1.scatter(Train[Train.PotentialFraud == 1].Age,
+                            Train[Train.PotentialFraud == 1].InscClaimAmtReimbursed)
+                ax1.set_title('Fraud')
+                ax1.axhline(y=60000, c='r')
+                ax1.set_ylabel('Insurance Claim Amout Reimbursed')
+
+                ax2.scatter(Train[Train.PotentialFraud == 0].Age,
+                            Train[Train.PotentialFraud == 0].InscClaimAmtReimbursed)
+                ax2.set_title('Normal')
+                ax2.axhline(y=60000, c='r')
+                ax2.set_xlabel('Age (in Years)')
+                ax2.set_ylabel('Insurance Claim Amout Reimbursed')
+
+                plt.savefig(s, format='png', bbox_inches="tight")
+                plt.close('all')
+
+                s = base64.b64encode(s.getvalue()).decode("utf-8").replace("\n", "")
+                insuranceClaim=s
+                responseObject={'normalDistribution':normalDistribution,'raceWise':raceWise,'insuranceClaim':insuranceClaim}
+                """,'raceWise':raceWise,'insuranceClaim':insuranceClaim"""
+                response = {'status': 'Success', 'responseObject': responseObject}
+
+
+
+                print('Finished Insurance Claim')
+                os.remove(ihaTrain.filename)
+            else:
+                response = {'status': 'Failure', 'responseObject': 'The requested object not found.'}
+
+        else:
+            response = {'status': 'Failure', 'responseObject': 'The requested method is a get method.'}
+    except Exception as e:
+        print(str(e))
+        response = {'status': 'Failure', 'responseObject': str(e)}
+
+    return JsonResponse(response,safe=False)
+
+
 def getAll(request):
     ihaList=IhaDetails.objects.all()
     #encoded = ihaList[14].actualfile.decode("utf-8")
